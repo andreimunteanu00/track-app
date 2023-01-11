@@ -55,6 +55,7 @@ public class AuthServiceImpl implements AuthService {
                 || !passwordEncoder.matches(user.getPassword(), databaseUser.getPassword())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid credentials");
         }
+        // TODO error token
         return "token to be returned";
         // return jwtTokenUtil.generateToken(databaseUser.getUsername());
     }
