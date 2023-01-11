@@ -22,8 +22,10 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf().disable()
+                .cors().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("api/auth/**").permitAll()
+                .requestMatchers("/api/auth/register").permitAll()
+                .requestMatchers("/api/auth/login").permitAll()
                 .requestMatchers("/**").authenticated()
                 .and().addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
