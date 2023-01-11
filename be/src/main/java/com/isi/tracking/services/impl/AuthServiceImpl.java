@@ -7,6 +7,7 @@ import com.google.cloud.firestore.Firestore;
 import com.google.firebase.cloud.FirestoreClient;
 import com.isi.tracking.models.User;
 import com.isi.tracking.services.AuthService;
+import com.isi.tracking.utils.JwtTokenUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,6 +20,7 @@ import java.util.concurrent.ExecutionException;
 @AllArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
+    private final JwtTokenUtil jwtTokenUtil;
     private final PasswordEncoder passwordEncoder;
     private final String COLLECTION = "users";
 
@@ -40,7 +42,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public void login(User user) throws ExecutionException, InterruptedException {
+    public String login(User user) throws ExecutionException, InterruptedException {
         Firestore firestore = FirestoreClient.getFirestore();
         DocumentReference documentReference = firestore.collection(COLLECTION).document(user.getUsername());
         ApiFuture<DocumentSnapshot> future = documentReference.get();
@@ -53,6 +55,7 @@ public class AuthServiceImpl implements AuthService {
                 || !passwordEncoder.matches(user.getPassword(), databaseUser.getPassword())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid credentials");
         }
+        return jwtTokenUtil.generateToken(databaseUser.getUsername());
     }
 
 

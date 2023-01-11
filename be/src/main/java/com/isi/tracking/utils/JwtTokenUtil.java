@@ -27,9 +27,9 @@ public class JwtTokenUtil implements Serializable {
         return expiration.before(new Date());
     }
 
-    public String generateToken(String googleId) {
+    public String generateToken(String username) {
         return Jwts.builder()
-                .setSubject(googleId)
+                .setSubject(username)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + JWT_TOKEN_VALIDITY * 10000000))
                 .signWith(SignatureAlgorithm.HS512, secret).compact();

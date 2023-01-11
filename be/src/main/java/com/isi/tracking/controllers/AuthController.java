@@ -4,15 +4,12 @@ import com.isi.tracking.models.User;
 import com.isi.tracking.services.AuthService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.concurrent.ExecutionException;
 
 @RestController
-@RequestMapping("auth")
+@RequestMapping("api/auth")
 @AllArgsConstructor
 public class AuthController {
 
@@ -25,8 +22,8 @@ public class AuthController {
     }
 
     @PostMapping("login")
-    ResponseEntity<Void> login(@RequestBody User user) throws ExecutionException, InterruptedException {
-        authService.login(user);
-        return ResponseEntity.accepted().build();
+    ResponseEntity<String> login(@RequestBody User user) throws ExecutionException, InterruptedException {
+        String token = authService.login(user);
+        return ResponseEntity.ok(token);
     }
 }

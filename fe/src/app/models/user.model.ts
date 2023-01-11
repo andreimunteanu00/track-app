@@ -1,11 +1,12 @@
 export interface IUser {
-  username?: string;
+  username?: string | undefined | null;
+  password?: string | undefined | null;
 }
 
-// @ts-ignore
 export class User implements IUser {
   constructor(
-    public username?: number
+    public username?: string | undefined | null,
+    public password?: string | undefined | null
   ) {}
 }
 
