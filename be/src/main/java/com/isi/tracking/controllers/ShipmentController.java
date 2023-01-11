@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 public class ShipmentController {
 
@@ -18,6 +20,11 @@ public class ShipmentController {
     }
     @Autowired
     private ShipmentService shipmentService;
+
+    @GetMapping(path = "/shipment")
+    ResponseEntity<List<Shipment>> getShipments() {
+        return new ResponseEntity<>(shipmentService.getShipments(), httpHeaders, HttpStatus.OK);
+    }
 
     @GetMapping(path = "/shipment/{id}")
     ResponseEntity<Shipment> getShipmentById(@PathVariable("id") String id) {
