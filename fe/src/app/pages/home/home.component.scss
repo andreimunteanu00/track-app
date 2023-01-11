@@ -1,0 +1,19 @@
+.shipments_container {
+  border-color: lightgray;
+  border-radius: 8px;
+}
+
+.shipment_item {
+  border-radius: 8px;
+  margin-left: 16px;
+  margin-right: 16px;
+  margin-top: 8px;
+  padding: 8px;
+
+  background: #D3D3D3FF;
+  transition: 0.5s;
+}
+
+.shipment_item:hover {
+  background: #e8e8e8;
+}

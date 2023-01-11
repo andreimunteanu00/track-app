@@ -10,10 +10,12 @@
         </a>
         with . . .
     </h1>
-  <div>
+  <div class="shipments_container">
     Your shipments
-    <div *ngFor="let shipment of shipments">
-      {{ shipment.carrier }}
+    <div *ngFor="let shipment of shipments" class="shipment_item">
+      Carrier: {{ shipment.carrier }} <br>
+      Shipping method: {{ shipment.shippingMethod }} <br>
+      Estimated date of arrival: {{ shipment.estimatedDeliveryDate }} <br>
     </div>
   </div>
 </div>
