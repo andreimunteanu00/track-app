@@ -10,12 +10,16 @@ import {ShipmentService} from "../../services/shipment.service";
 })
 export class HomeComponent implements OnInit {
     shipments: Shipment[];
+    shipmentsAreLoaded: boolean;
 
-    constructor(private shipmentService: ShipmentService) { }
+    constructor(private shipmentService: ShipmentService) {
+      this.shipmentsAreLoaded = false;
+    }
 
     ngOnInit() {
       this.shipmentService.getShipments().subscribe(value => {
-        console.log(value)
+        this.shipments = value
+        this.shipmentsAreLoaded = true;
       })
     }
 }
