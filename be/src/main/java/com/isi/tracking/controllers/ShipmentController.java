@@ -9,11 +9,12 @@ import com.isi.tracking.models.Shipment;
 
 @RestController
 @AllArgsConstructor
+@RequestMapping("api/shipment")
 public class ShipmentController {
 
     private ShipmentService shipmentService;
 
-    @GetMapping(path = "/shipment/{id}")
+    @GetMapping(path = "{id}")
     ResponseEntity<Shipment> getShipmentById(@PathVariable("id") String id) {
 
         Shipment shipment = shipmentService.getShipmentById(id);
@@ -24,19 +25,19 @@ public class ShipmentController {
         return new ResponseEntity<>(shipment, HttpStatus.OK);
     }
 
-    @PostMapping(path = "/shipment")
+    @PostMapping
     ResponseEntity<Shipment> createShipment(@RequestBody Shipment shipment) {
 
         return new ResponseEntity<>(shipmentService.storeShipment(shipment), HttpStatus.CREATED);
     }
 
-    @PutMapping(path = "/shipment")
+    @PutMapping
     ResponseEntity<Shipment> updateShipment(@RequestBody Shipment shipment) {
 
         return new ResponseEntity<>(shipmentService.updateShipment(shipment), HttpStatus.ACCEPTED);
     }
 
-    @DeleteMapping(path = "/shipment/{id}")
+    @DeleteMapping(path = "{id}")
     ResponseEntity<Void> deleteShipment(@PathVariable("id") String id) {
 
         shipmentService.deleteShipment(id);
