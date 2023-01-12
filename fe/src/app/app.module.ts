@@ -15,6 +15,10 @@ import {AuthInterceptor} from "./util/interceptors/auth.interceptor";
 import { LoadingScreenComponent } from './util/loading-screen/loading-screen.component';
 import {LoadingScreenInterceptor} from "./util/interceptors/loading-screen.interceptor";
 import {ErrorHandlerInterceptor} from "./util/interceptors/error-handler.interceptor";
+import { HomeComponent } from './home/home.component';
+import {AuthGuard} from "./util/guards/auth.guard";
+import { MapComponent } from './home/map/map.component';
+import { HistoryComponent } from './home/history/history.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +27,10 @@ import {ErrorHandlerInterceptor} from "./util/interceptors/error-handler.interce
     NavbarComponent,
     LoginComponent,
     SignupComponent,
-    LoadingScreenComponent
+    LoadingScreenComponent,
+    HomeComponent,
+    MapComponent,
+    HistoryComponent
   ],
   imports: [
     BrowserModule,
@@ -34,6 +41,7 @@ import {ErrorHandlerInterceptor} from "./util/interceptors/error-handler.interce
   providers: [
     AuthService,
     JwtHelperService,
+    AuthGuard,
     {
       provide: JWT_OPTIONS,
       useValue: JWT_OPTIONS

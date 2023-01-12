@@ -33,7 +33,7 @@ export class AuthService {
 
   logout() {
     localStorage.clear();
-    window.location.href = '/';
+    window.location.href = '/login';
   }
 
   register(user: IUser) {
