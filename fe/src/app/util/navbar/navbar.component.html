@@ -1,13 +1,13 @@
 <nav class="navbar bg-dark">
-  <a style="visibility: hidden"><img src="../../../assets/images/logo.png" class="navbar-img"></a>
+  <a style="visibility: hidden"><img src="" class="navbar-img"></a>
   <form *ngIf="!checkLogin()" class="form-inline">
     <div class='container'>
       <button
         [routerLink]="['/login']"
+        style="margin-right: 0.5rem"
         type="button"
         class='btn btn-light'>Login</button>
       <button
-        style="margin-right: 2rem"
         [routerLink]="['/signup']"
         type="button"
         class="btn btn-danger">Sign Up</button>
