@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {BehaviorSubject, first, tap} from "rxjs";
 import {HttpClient} from "@angular/common/http";
 import {Router} from "@angular/router";
@@ -49,6 +49,15 @@ export class AuthService {
   isLogged(): boolean {
     const encodedToken = localStorage.getItem("token");
     return !!encodedToken;
+  }
+
+  /**
+  method to be used for searching specific user data
+   */
+  getCurrentUserId(): string {
+    const encodedToken = localStorage.getItem("token");
+    const token = this.jwtHelper.decodeToken(encodedToken!);
+    return token.sub;
   }
 
 }
