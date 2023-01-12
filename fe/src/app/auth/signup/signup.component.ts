@@ -38,11 +38,6 @@ export class SignupComponent implements OnInit {
     }
     const user = new User(this.registerForm.get("email")?.value, this.registerForm.get("password")?.value)
     this.authService.register(user).subscribe((res: any) => {
-      Swal.fire({
-        title: res.body.success,
-        icon: "success",
-        confirmButtonColor: "green"
-      })
       this.router.navigate(['/login']);
     })
   }

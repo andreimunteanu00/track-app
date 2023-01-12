@@ -6,7 +6,7 @@ import {
   HttpRequest, HttpHeaders,
 } from "@angular/common/http";
 
-import { Observable } from "rxjs";
+import {Observable, tap} from "rxjs";
 
 @Injectable({
   providedIn: "root",
@@ -22,6 +22,10 @@ export class AuthInterceptor implements HttpInterceptor {
       headers.set('Authorization', 'Bearer ' + token);
     }
     const clonedRequest = req.clone({headers});
-    return next.handle(clonedRequest);
+    return next.handle(clonedRequest).pipe(
+      tap((res: any) => {
+        console.log(res);
+      })
+    );
   }
 }
