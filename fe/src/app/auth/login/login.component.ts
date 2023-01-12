@@ -11,7 +11,7 @@ import {User} from "../../models/user.model";
 export class LoginComponent {
 
   loginForm = this.fb.group({
-    username: [],
+    email: [],
     password: []
   })
 
@@ -26,9 +26,9 @@ export class LoginComponent {
   }
 
   private getUser() {
-    const username: string | undefined | null = this.loginForm.get("username")?.value;
+    const email: string | undefined | null = this.loginForm.get("email")?.value;
     const password: string | undefined | null = this.loginForm.get("password")?.value;
-    return new User(username, password);
+    return new User(email, password);
   }
 
 }

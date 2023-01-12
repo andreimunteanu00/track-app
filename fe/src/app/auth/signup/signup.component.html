@@ -1,1 +1,35 @@
-<p>signup works!</p>
+<div style="padding: 5rem 25%">
+  <form class="form text-center text-align">
+    <div class="card bg-white">
+      <div class="card-header p-3 mb-2 bg-dark text-white"></div>
+      <div class="card-body">
+        <h3 class="card-title">It’s nice to meet you!</h3>
+        <h6 class="card-title">Create your account now</h6>
+        <form [formGroup]='registerForm' class="card-text">
+          <!-- Email -->
+          <input
+            formControlName="email"
+            type="email"
+            id="defaultLoginFormEmail"
+            class="form-control mb-4 w-100"
+            placeholder="E-mail">
+          <!-- Password -->
+          <input
+            formControlName="password"
+            type="password"
+            id="defaultLoginFormPassword"
+            class="form-control mb-4"
+            placeholder="Password">
+          <!-- Confirm Password -->
+          <input
+            formControlName="confirmPassword"
+            type="password"
+            id="defaultLoginFormPasswordConfirm"
+            class="form-control mb-4"
+            placeholder="Confirm password">
+        </form>
+        <button type="button" class="btn btn-danger" (click)="register()">Sign Up</button>
+      </div>
+    </div>
+  </form>
+</div>

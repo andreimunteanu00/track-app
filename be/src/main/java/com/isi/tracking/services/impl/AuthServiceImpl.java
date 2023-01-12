@@ -29,16 +29,16 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public void register(User user) throws ExecutionException, InterruptedException {
         Firestore firestore = FirestoreClient.getFirestore();
-        DocumentReference documentReference = firestore.collection(COLLECTION).document(user.getUsername());
+        DocumentReference documentReference = firestore.collection(COLLECTION).document(user.getEmail());
         ApiFuture<DocumentSnapshot> future = documentReference.get();
         DocumentSnapshot document = future.get();
         if (document.exists()) {
             throw new ResponseStatusException(HttpStatus.CONFLICT,
-                    String.format("Username already exists: %s", user.getUsername()));
+                    String.format("Username already exists: %s", user.getEmail()));
         } else {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             firestore.collection(COLLECTION)
-                    .document(user.getUsername())
+                    .document(user.getEmail())
                     .set(user);
         }
     }
@@ -46,18 +46,18 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public Token login(User user) throws ExecutionException, InterruptedException {
         Firestore firestore = FirestoreClient.getFirestore();
-        DocumentReference documentReference = firestore.collection(COLLECTION).document(user.getUsername());
+        DocumentReference documentReference = firestore.collection(COLLECTION).document(user.getEmail());
         ApiFuture<DocumentSnapshot> future = documentReference.get();
         User databaseUser = future.get().toObject(User.class);
         if (databaseUser == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    String.format("User doesn't exist: %s", user.getUsername()));
+                    String.format("User doesn't exist: %s", user.getEmail()));
         }
-        if (!user.getUsername().equals(databaseUser.getUsername())
+        if (!user.getEmail().equals(databaseUser.getEmail())
                 || !passwordEncoder.matches(user.getPassword(), databaseUser.getPassword())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid credentials");
         }
-        return new Token(jwtTokenUtil.generateToken(databaseUser.getUsername()));
+        return new Token(jwtTokenUtil.generateToken(databaseUser.getEmail()));
     }
 
 

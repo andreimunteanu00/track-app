@@ -1,4 +1,4 @@
-<div class="login">
+<div style="padding: 5rem 25%">
   <form class="form text-center">
     <div class="card bg-white mb-3">
       <div class="card-header p-3 mb-2 bg-danger text-white"></div>
@@ -6,13 +6,13 @@
         <h3 class="card-title">Welcome Back!</h3>
         <h6 class="card-title">Login to your account</h6>
         <form [formGroup]="loginForm" class="card-text">
-          <!-- Username -->
+          <!-- Email -->
           <input
-            formControlName="username"
-            type="username"
+            formControlName="email"
+            type="email"
             id="defaultLoginFormEmail"
             class="form-control mb-4 w-100"
-            placeholder="Username">
+            placeholder="Email">
           <!-- Password -->
           <input
             formControlName="password"

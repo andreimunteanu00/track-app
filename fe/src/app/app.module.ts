@@ -11,7 +11,10 @@ import {JWT_OPTIONS, JwtHelperService} from "@auth0/angular-jwt";
 import {ReactiveFormsModule} from "@angular/forms";
 import { LoginComponent } from './auth/login/login.component';
 import { SignupComponent } from './auth/signup/signup.component';
-import {AuthInterceptorService} from "./util/auth.interceptor";
+import {AuthInterceptor} from "./util/auth.interceptor";
+import { LoadingScreenComponent } from './util/loading-screen/loading-screen.component';
+import {LoadingScreenInterceptor} from "./util/loading-screen.interceptor";
+import {ErrorHandlerInterceptor} from "./util/error-handler.interceptor";
 
 @NgModule({
   declarations: [
@@ -19,7 +22,8 @@ import {AuthInterceptorService} from "./util/auth.interceptor";
     AuthComponent,
     NavbarComponent,
     LoginComponent,
-    SignupComponent
+    SignupComponent,
+    LoadingScreenComponent
   ],
   imports: [
     BrowserModule,
@@ -36,9 +40,19 @@ import {AuthInterceptorService} from "./util/auth.interceptor";
     },
     {
       provide: HTTP_INTERCEPTORS,
-      useClass: AuthInterceptorService,
+      useClass: AuthInterceptor,
       multi: true
     },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: LoadingScreenInterceptor,
+      multi: true
+    },
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: ErrorHandlerInterceptor,
+      multi: true
+    }
   ],
   bootstrap: [AppComponent]
 })
