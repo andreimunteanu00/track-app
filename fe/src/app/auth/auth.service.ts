@@ -48,10 +48,7 @@ export class AuthService {
 
   isLogged(): boolean {
     const encodedToken = localStorage.getItem("token");
-    if (encodedToken) {
-      return true;
-    }
-    return false;
+    return !!encodedToken;
   }
 
 }

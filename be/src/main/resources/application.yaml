@@ -1,4 +1,4 @@
 server:
   port: 8080
 jwt:
-  secret: "123456"
+  secret: 123456

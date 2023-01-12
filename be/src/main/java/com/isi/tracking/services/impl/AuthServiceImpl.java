@@ -5,6 +5,7 @@ import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
 import com.google.firebase.cloud.FirestoreClient;
+import com.isi.tracking.models.Token;
 import com.isi.tracking.models.User;
 import com.isi.tracking.services.AuthService;
 import com.isi.tracking.utils.JwtTokenUtil;
@@ -14,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
 @Service
@@ -42,7 +44,7 @@ public class AuthServiceImpl implements AuthService {
     }
 
     @Override
-    public String login(User user) throws ExecutionException, InterruptedException {
+    public Token login(User user) throws ExecutionException, InterruptedException {
         Firestore firestore = FirestoreClient.getFirestore();
         DocumentReference documentReference = firestore.collection(COLLECTION).document(user.getUsername());
         ApiFuture<DocumentSnapshot> future = documentReference.get();
@@ -55,9 +57,7 @@ public class AuthServiceImpl implements AuthService {
                 || !passwordEncoder.matches(user.getPassword(), databaseUser.getPassword())) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid credentials");
         }
-        // TODO error token
-        return "token to be returned";
-        // return jwtTokenUtil.generateToken(databaseUser.getUsername());
+        return new Token(jwtTokenUtil.generateToken(databaseUser.getUsername()));
     }
 
 

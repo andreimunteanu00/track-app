@@ -16,20 +16,12 @@ export class AuthInterceptorService implements HttpInterceptor {
     req: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
+    const headers = new HttpHeaders();
     const token = localStorage.getItem("token");
     if (token) {
-      const headers = new HttpHeaders({
-        'Authorization': 'Bearer ' + token,
-        'Access-Control-Allow-Origin': '*'
-      });
-      const clonedRequest = req.clone({headers});
-      return next.handle(clonedRequest);
-    } else {
-      const headers = new HttpHeaders({
-        'Access-Control-Allow-Origin': '*'
-      });
-      const clonedRequest = req.clone({headers});
-      return next.handle(clonedRequest);
+      headers.set('Authorization', 'Bearer ' + token);
     }
+    const clonedRequest = req.clone({headers});
+    return next.handle(clonedRequest);
   }
 }

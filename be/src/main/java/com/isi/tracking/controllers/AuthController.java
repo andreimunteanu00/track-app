@@ -1,5 +1,6 @@
 package com.isi.tracking.controllers;
 
+import com.isi.tracking.models.Token;
 import com.isi.tracking.models.User;
 import com.isi.tracking.services.AuthService;
 import lombok.AllArgsConstructor;
@@ -11,6 +12,7 @@ import java.util.concurrent.ExecutionException;
 @RestController
 @RequestMapping("api/auth")
 @AllArgsConstructor
+@CrossOrigin("http://localhost:4200")
 public class AuthController {
 
     private final AuthService authService;
@@ -22,8 +24,8 @@ public class AuthController {
     }
 
     @PostMapping("login")
-    ResponseEntity<String> login(@RequestBody User user) throws ExecutionException, InterruptedException {
-        String token = authService.login(user);
-        return ResponseEntity.ok(token);
+    ResponseEntity<Token> login(@RequestBody User user) throws ExecutionException, InterruptedException {
+        Token token = authService.login(user);
+        return ResponseEntity.ok().body(token);
     }
 }
