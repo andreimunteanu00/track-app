@@ -1,2 +1,22 @@
 <!-- Here's the DIV that we inject the map into -->
 <div #mapViewNode></div>
+<div class="filter">
+    <h1>Select shipment centers</h1>
+    <div class="models">
+      <div class="checkbox">
+        <label><input type="checkbox" rel="UPS" (click)="change()" checked/>UPS</label>
+      </div>
+      <div class="checkbox">
+        <label><input type="checkbox" rel="FedEx" (click)="change()" checked/>FedEx</label>
+      </div>
+      <div class="checkbox">
+        <label><input type="checkbox" rel="easyBox" (click)="change()" checked/>easyBox</label>
+      </div>
+      <div class="checkbox">
+        <label><input type="checkbox" rel="FANCourier" (click)="change()" checked/>FANCourier</label>
+      </div>
+      <div class="checkbox">
+        <label><input type="checkbox" rel="Cargus" (click)="change()" checked/>Cargus</label>
+      </div>
+    </div>
+</div>

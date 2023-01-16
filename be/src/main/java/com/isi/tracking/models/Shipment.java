@@ -1,9 +1,8 @@
 package com.isi.tracking.models;
 
+import com.isi.tracking.utils.ShippingMethodEnum;
 import lombok.Getter;
 import lombok.Setter;
-import proiect.isi.deliverytracker.utils.ShippingMethodEnum;
-
 import java.util.Date;
 
 @Getter
@@ -19,7 +18,7 @@ public class Shipment {
     private Date eta;
     private ShippingMethodEnum shippingMethod;
     private String carrier;
-    private Long trackingNumber;
+    private String trackingNumber;
     private Double currentLat;
     private Double currentLong;
 }

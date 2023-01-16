@@ -1,3 +1,4 @@
+import { HttpClient } from "@angular/common/http";
 import {
   Component,
   OnInit,
@@ -11,6 +12,7 @@ import {
 import { setDefaultOptions, loadModules } from 'esri-loader';
 // @ts-ignore
 import esri = __esri; // Esri TypeScript Types
+import { ShipmentCenter } from '../../models/shipment-center.model';
 
 
 @Component({
@@ -43,16 +45,23 @@ export class MapComponent implements OnInit, OnDestroy{
   graphicsLayer: esri.GraphicsLayer;
 
   // Attributes
-  zoom = 10;
-  center: Array<number> = [-118.73682450024377, 34.07817583063242];
+  zoom = 11;
+  center: Array<number> = [26.103030, 44.435408];
   basemap = "streets-vector";
   loaded = false;
-  pointCoords: number[] = [-118.73682450024377, 34.07817583063242];
+  pointCoords: number[] = [26.103030, 44.435408];
   dir: number = 0;
   count: number = 0;
   timeoutHandler = null;
+  shipmentComapanyLogoURLs = {"UPS": {"url": "https://i.postimg.cc/RFPcCDcs/ups.png", "width": "20px", "height": "25px"},
+    "FedEx": {"url": "https://i.postimg.cc/JzHmVZpV/FedEx.png", "width": "25px", "height": "20px"},
+    "easyBox": {"url": "https://i.postimg.cc/GpvFh1T0/sameday-easybox.png", "width": "25px", "height": "20px"},
+    "FANCourier": {"url": "https://i.postimg.cc/fbH9bTWr/Logo-Fan-Courier-svg.png", "width": "25px", "height": "20px"},
+    "Cargus": {"url": "https://i.postimg.cc/dtmD1t4j/logo-cargus.png", "width": "25px", "height": "20px"}};
+  shipmentCenterLayers: any[];
 
-  constructor() { }
+  constructor(protected http: HttpClient) {
+  }
 
   async initializeMap() {
     try {
@@ -125,35 +134,95 @@ export class MapComponent implements OnInit, OnDestroy{
 
 
   addFeatureLayers() {
-    // Trailheads feature layer (points)
-    // @ts-ignore
-    var trailheadsLayer: __esri.FeatureLayer = new this._FeatureLayer({
-      url:
-        "https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/Trailheads/FeatureServer/0"
-    });
+    this.shipmentCenterLayers = [];
+    var selectedCenters = ["UPS", "FedEx", "easyBox", "FANCourier", "Cargus"];
 
-    this.map.add(trailheadsLayer);
+    this.addShipmentCenters(selectedCenters);
+  }
 
+  addShipmentCenters(centers: any[]) {
 
-    // Trails feature layer (lines)
-    // @ts-ignore
-    var trailsLayer: __esri.FeatureLayer = new this._FeatureLayer({
-      url:
-        "https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/Trails/FeatureServer/0"
-    });
+    this.http.get<Array<ShipmentCenter>>('http://localhost:8080/api/center', {observe:"response"})
+      .subscribe(response => {
+        console.log(response.body);
 
-    this.map.add(trailsLayer, 0);
+        for (let center of response.body) {
+          if (!centers.includes(center.name)) {
+            continue;
+          }
+          console.log(center.name);
+          const point = {
+            type: "point",
+            longitude: center.longitude,
+            latitude: center.latitude
+          };
+          const markerExtent = {
+            xmin: -76.492706,
+            xmax: -76.488920,
+            ymin: 38.978750,
+            ymax: 38.980800
+          }
+          const symbolMarker = {
+            type: "picture-marker",
+            url: this.shipmentComapanyLogoURLs[center.name].url,
+            width: this.shipmentComapanyLogoURLs[center.name].width,
+            height: this.shipmentComapanyLogoURLs[center.name].height
+          };
+          const graphicPoint = new this._Graphic({
+            geometry: point,
+            symbol: symbolMarker
+          });
+          const layerPoint = new this._GraphicsLayer({
+            graphics: [graphicPoint]
+          });
+          layerPoint.add(graphicPoint);
+          this.shipmentCenterLayers.push(layerPoint);
+          this.map.add(layerPoint);
+        }
+      })
+      
+  }
 
-    // Parks and open spaces (polygons)
-    // @ts-ignore
-    var parksLayer: __esri.FeatureLayer = new this._FeatureLayer({
-      url:
-        "https://services3.arcgis.com/GVgbJbqm8hXASVYi/arcgis/rest/services/Parks_and_Open_Space/FeatureServer/0"
-    });
+  change() {
+    var modelCbs = document.querySelectorAll(".models input[type='checkbox']");
+    var processorCbs = document.querySelectorAll(".processors input[type='checkbox']");
+    var filters = {
+      models: this.getClassOfCheckedCheckboxes(modelCbs),
+      processors: this.getClassOfCheckedCheckboxes(processorCbs)
+    };
+  
+    this.filterResults(filters);
+  }
+  
+  getClassOfCheckedCheckboxes(checkboxes) {
+    var classes = [];
+  
+    if (checkboxes && checkboxes.length > 0) {
+      for (var i = 0; i < checkboxes.length; i++) {
+        var cb = checkboxes[i];
+  
+        if (cb.checked) {
+          classes.push(cb.getAttribute("rel"));
+        }
+      }
+    }
+  
+    return classes;
+  }
+  
+  filterResults(filters) {
+    var selectedCenters = [];
+  
+    for (var j = 0; j < filters.models.length; j++) {
+      selectedCenters.push(filters.models[j]);
+    }
 
-    this.map.add(parksLayer, 0);
-
-    console.log("feature layers added");
+    // Shipipment Centers
+    for (let shipmentLayer of this.shipmentCenterLayers) {
+      this.map.remove(shipmentLayer);
+    }
+    this.shipmentCenterLayers = [];
+    this.addShipmentCenters(selectedCenters);
   }
 
   addPoint(lat: number, lng: number) {
