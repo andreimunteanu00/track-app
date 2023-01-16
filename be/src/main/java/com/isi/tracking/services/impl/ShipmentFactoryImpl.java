@@ -3,13 +3,12 @@ package com.isi.tracking.services.impl;
 import com.isi.tracking.models.Shipment;
 import com.isi.tracking.services.AuthService;
 import com.isi.tracking.services.ShipmentFactory;
+import com.isi.tracking.utils.ShippingMethodEnum;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import proiect.isi.deliverytracker.utils.ShippingMethodEnum;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.Date;
 import java.util.Random;
 
