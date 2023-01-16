@@ -19,6 +19,7 @@ import { HomeComponent } from './home/home.component';
 import {AuthGuard} from "./util/guards/auth.guard";
 import { MapComponent } from './home/map/map.component';
 import { HistoryComponent } from './home/history/history.component';
+import { HistoryListComponent } from './home/history/history-list/history-list.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { HistoryComponent } from './home/history/history.component';
     LoadingScreenComponent,
     HomeComponent,
     MapComponent,
-    HistoryComponent
+    HistoryComponent,
+    HistoryListComponent
   ],
   imports: [
     BrowserModule,
