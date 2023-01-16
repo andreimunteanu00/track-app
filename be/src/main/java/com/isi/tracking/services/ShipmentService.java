@@ -2,7 +2,11 @@ package com.isi.tracking.services;
 
 import com.isi.tracking.models.Shipment;
 
+import java.util.List;
+
 public interface ShipmentService {
+
+    List<Shipment> getUserShipments();
 
     Shipment getShipmentById(String id);
 

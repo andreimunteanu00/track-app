@@ -9,6 +9,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import com.isi.tracking.models.Shipment;
 
+import java.util.List;
+
 @RestController
 @AllArgsConstructor
 @RequestMapping("api/shipment")
@@ -16,6 +18,11 @@ public class ShipmentController {
 
     private ShipmentService shipmentService;
     private ShipmentFactory shipmentFactory;
+
+    @GetMapping(path = "/my")
+    ResponseEntity<List<Shipment>> getUserShipments() {
+        return new ResponseEntity<>(shipmentService.getUserShipments(), HttpStatus.OK);
+    }
 
     @GetMapping(path = "{id}")
     ResponseEntity<Shipment> getShipmentById(@PathVariable("id") String id) {

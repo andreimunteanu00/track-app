@@ -63,7 +63,8 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public String getCurrentUsername() {
-        return SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return user.getEmail();
     }
 
 

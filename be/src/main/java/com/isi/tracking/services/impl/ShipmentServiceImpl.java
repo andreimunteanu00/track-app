@@ -2,11 +2,10 @@ package com.isi.tracking.services.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.DocumentReference;
-import com.google.cloud.firestore.DocumentSnapshot;
-import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.WriteResult;
+import com.google.cloud.firestore.*;
 import com.google.firebase.cloud.FirestoreClient;
+import com.isi.tracking.services.AuthService;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -15,15 +14,41 @@ import org.springframework.web.server.ResponseStatusException;
 import com.isi.tracking.models.Shipment;
 import com.isi.tracking.services.ShipmentService;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
+@AllArgsConstructor
 public class ShipmentServiceImpl implements ShipmentService {
+    private final AuthService authService;
 
     private final ObjectMapper mapper = new ObjectMapper();
-    Logger logger = LoggerFactory.getLogger(ShipmentServiceImpl.class);
+    private final Logger logger = LoggerFactory.getLogger(ShipmentServiceImpl.class);
 
     private final String COLLECTION = "shipments";
+
+    @Override
+    public List<Shipment> getUserShipments() {
+        try {
+            Firestore firestore = FirestoreClient.getFirestore();
+            ApiFuture<QuerySnapshot> future = firestore.collection(COLLECTION).get();
+
+            QuerySnapshot querySnapshot = future.get();
+            List<QueryDocumentSnapshot> documentSnapshots = querySnapshot.getDocuments();
+
+            List<Shipment> shipments = documentSnapshots.stream().map(
+                    queryDocumentSnapshot -> queryDocumentSnapshot.toObject(Shipment.class)
+            ).filter(
+                    shipment -> shipment.getUserId().equals(authService.getCurrentUsername())
+            ).collect(Collectors.toList());
+
+            return shipments;
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    String.format("Getting shipment by id: %s failed with exception:\n%s", e.getMessage()));
+        }
+    }
 
     @Override
     public Shipment getShipmentById(String id) {
