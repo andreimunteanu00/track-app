@@ -1,4 +1,4 @@
-package proiect.isi.deliverytracker.utils;
+package com.isi.tracking.utils;
 
 public enum ShippingMethodEnum {
     TERRESTRIAL,
