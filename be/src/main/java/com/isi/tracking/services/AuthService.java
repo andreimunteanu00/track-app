@@ -11,4 +11,6 @@ public interface AuthService {
 
     Token login(User user) throws ExecutionException, InterruptedException;
 
+    String getCurrentUsername();
+
 }
