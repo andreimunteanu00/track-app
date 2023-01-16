@@ -10,6 +10,7 @@ import {IShip} from "../../../models/ship.model";
 export class HistoryListComponent implements OnInit {
 
   shipments: IShip[];
+  selectedShipment: IShip;
 
   constructor(private historyService: HistoryService) {}
 
@@ -21,5 +22,9 @@ export class HistoryListComponent implements OnInit {
 
   newShipment() {
 
+  }
+
+  selectShipment(shipment) {
+    this.selectedShipment = shipment;
   }
 }
