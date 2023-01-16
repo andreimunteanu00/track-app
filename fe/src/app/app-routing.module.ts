@@ -4,6 +4,7 @@ import {LoginComponent} from "./auth/login/login.component";
 import {SignupComponent} from "./auth/signup/signup.component";
 import {HomeComponent} from "./home/home.component";
 import {AuthGuard} from "./util/guards/auth.guard";
+import {HistoryListComponent} from "./home/history/history-list/history-list.component";
 
 const routes: Routes = [
   {
@@ -13,6 +14,10 @@ const routes: Routes = [
   {
     path: "login",
     component: LoginComponent,
+  },
+  {
+    path: "history-list",
+    component: HistoryListComponent,
   },
   {
     path: "**",
