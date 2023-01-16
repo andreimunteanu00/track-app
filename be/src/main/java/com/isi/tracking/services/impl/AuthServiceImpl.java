@@ -11,6 +11,7 @@ import com.isi.tracking.services.AuthService;
 import com.isi.tracking.utils.JwtTokenUtil;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -58,6 +59,12 @@ public class AuthServiceImpl implements AuthService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid credentials");
         }
         return new Token(jwtTokenUtil.generateToken(databaseUser.getEmail()));
+    }
+
+    @Override
+    public String getCurrentUsername() {
+        User user = (User)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return user.getEmail();
     }
 
 
