@@ -18,7 +18,7 @@ public class Shipment {
     private Date eta;
     private ShippingMethodEnum shippingMethod;
     private String carrier;
-    private String trackingNumber;
+    private Long trackingNumber;
     private Double currentLat;
     private Double currentLong;
 }
