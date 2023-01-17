@@ -61,11 +61,11 @@ export class MapComponent implements OnInit, OnDestroy, OnChanges {
   count: number = 0;
   timeoutHandler = null;
   shipmentComapanyLogoURLs = {
-    "UPS": {"url": "https://i.postimg.cc/RFPcCDcs/ups.png", "width": "20px", "height": "25px"},
-    "FedEx": {"url": "https://i.postimg.cc/JzHmVZpV/FedEx.png", "width": "25px", "height": "20px"},
-    "easyBox": {"url": "https://i.postimg.cc/GpvFh1T0/sameday-easybox.png", "width": "25px", "height": "20px"},
-    "FANCourier": {"url": "https://i.postimg.cc/fbH9bTWr/Logo-Fan-Courier-svg.png", "width": "25px", "height": "20px"},
-    "Cargus": {"url": "https://i.postimg.cc/dtmD1t4j/logo-cargus.png", "width": "25px", "height": "20px"}
+    "UPS": {"url": "https://i.postimg.cc/RFPcCDcs/ups.png", "width": "40px", "height": "40px"},
+    "FedEx": {"url": "https://i.postimg.cc/JzHmVZpV/FedEx.png", "width": "40px", "height": "40px"},
+    "easyBox": {"url": "https://i.postimg.cc/GpvFh1T0/sameday-easybox.png", "width": "40px", "height": "40px"},
+    "FANCourier": {"url": "https://i.postimg.cc/fbH9bTWr/Logo-Fan-Courier-svg.png", "width": "40px", "height": "40px"},
+    "Cargus": {"url": "https://i.postimg.cc/dtmD1t4j/logo-cargus.png", "width": "40px", "height": "40px"}
   };
   shipmentCenterLayers: any[];
   aerialCurrentLocation: {};
