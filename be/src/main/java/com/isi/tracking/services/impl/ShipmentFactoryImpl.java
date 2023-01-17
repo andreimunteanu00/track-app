@@ -83,6 +83,9 @@ public class ShipmentFactoryImpl implements ShipmentFactory {
 
         ShippingMethodEnum[] shippingMethods = ShippingMethodEnum.values();
         int shippingMethodIndex = random.nextInt(shippingMethods.length);
+        if (shippingMethods[shippingMethodIndex] == ShippingMethodEnum.AQUATIC) {
+            shippingMethodIndex++;
+        }
 
         shipment.setShippingMethod(shippingMethods[shippingMethodIndex]);
 
