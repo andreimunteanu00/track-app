@@ -41,8 +41,8 @@ public class ShipmentFactoryImpl implements ShipmentFactory {
         shipment.setStartLat(random.nextDouble(-90, 90));
         shipment.setStartLong(random.nextDouble(-180, 180));
 
-        shipment.setStartLat(random.nextDouble(-90, 90));
-        shipment.setStartLong(random.nextDouble(-180, 180));
+        shipment.setEndLat(random.nextDouble(-90, 90));
+        shipment.setEndLong(random.nextDouble(-180, 180));
 
         shipment.setCurrentPathIndex(10);
 

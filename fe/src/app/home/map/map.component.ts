@@ -70,6 +70,8 @@ export class MapComponent implements OnInit, OnDestroy, OnChanges {
   shipmentCenterLayers: any[];
   aerialCurrentLocation: {};
   aerialLayer: any;
+  shipmentLayer: any;
+  terrestrialPointsLayer: any;
   flisghtsGraphics: any[];
   testPloyline: any[];
 
@@ -79,7 +81,139 @@ export class MapComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    this.changeShipmentInfo(changes.shipment.currentValue);
+    //this.changeShipmentInfo(changes.shipment.currentValue);
+    
+    if (changes.shipment.previousValue) {
+      if ("AERIAL" == changes.shipment.previousValue.shippingMethod) {
+        this.map.remove(this.shipmentLayer);
+      } else if ("TERRESTRIAL" == changes.shipment.previousValue.shippingMethod) {
+        this.view.ui.empty("top-right");
+        this.view.graphics.remove(this.shipmentLayer);
+        this.map.remove(this.terrestrialPointsLayer);
+        console.log("Map from last shipment TERRESTRIAL " + this.map);
+      }
+    }
+    
+    if ("AERIAL" == changes.shipment.currentValue.shippingMethod) {
+      this.addAerialShipmentLayer(changes.shipment.currentValue);
+    } else if ("TERRESTRIAL" == changes.shipment.currentValue.shippingMethod) {
+      this.addTerrestrialLayer(changes.shipment.currentValue);
+    }
+  }
+
+  addTerrestrialLayer(shipment: any) {
+    const routeUrl = "https://route-api.arcgis.com/arcgis/rest/services/World/Route/NAServer/Route_World";
+
+    const startGraphic = new this._Graphic({
+      symbol: {
+        type: "simple-marker",
+        color: "white",
+        size: "8px"
+      },
+      geometry: new this._Point({
+        latitude: shipment.startLong,
+        longitude: shipment.startLat
+      })
+    });
+
+    const endGraphic = new this._Graphic({
+      symbol: {
+        type: "simple-marker",
+        color: "black",
+        size: "8px"
+      },
+      geometry: new this._Point({
+        latitude: shipment.endLong,
+        longitude: shipment.endLat
+      })
+    });
+
+    const routeParams = new this._RouteParameters({
+      stops: new this._FeatureSet({
+        features: [startGraphic, endGraphic]
+      }),
+      returnDirections: true
+    });
+
+    this._Route.solve(routeUrl, routeParams).then((data: any) => {
+      for (let result of data.routeResults) {
+        result.route.symbol = {
+          type: "simple-line",
+          color: [5, 150, 255],
+          width: 3
+        };
+        this.shipmentLayer = result.route;
+        this.view.graphics.add(result.route);
+      }
+
+      // Display directions
+      if (data.routeResults.length > 0) {
+        const directions: any = document.createElement("ol");
+        directions.classList = "esri-widget esri-widget--panel esri-directions__scroller";
+        directions.style.marginTop = "0";
+        directions.style.padding = "15px 15px 15px 30px";
+        const features = data.routeResults[0].directions.features;
+
+        var currrentPoint = this.updateLocation(data.routeResults[0].directions.features[shipment.currentPathIndex].geometry.paths[0][0][0],
+          data.routeResults[0].directions.features[shipment.currentPathIndex].geometry.paths[0][0][1]);
+        var graphicPoints = [];
+        this.terrestrialPointsLayer = new this._GraphicsLayer({
+          graphics: graphicPoints
+        });
+        graphicPoints.push(currrentPoint);
+        this.terrestrialPointsLayer.graphics = graphicPoints;
+        this.terrestrialPointsLayer.add(currrentPoint);
+        this.map.add(this.terrestrialPointsLayer);
+
+        let sum = 0;
+        // Show each direction
+        features.forEach((result: any, i: any) => {
+          sum += parseFloat(result.attributes.length);
+          const direction = document.createElement("li");
+          direction.innerHTML = result.attributes.text + " (" + result.attributes.length + " miles)";
+          directions.appendChild(direction);
+        });
+
+        sum = sum * 1.609344;
+        console.log('dist (km) = ', sum);
+
+        this.view.ui.empty("top-right");
+        this.view.ui.add(directions, "top-right");
+
+      }
+
+    }).catch((error: any) => {
+      console.log(error);
+    });
+  }
+
+  addAerialShipmentLayer(shipment: any) {
+    this.flisghtsGraphics = [];
+    this.shipmentLayer = new this._GraphicsLayer({
+      graphics: this.flisghtsGraphics
+    });
+
+    var polylineGraphic = this.createGeodesicLineAndUpdateCurrentPos(
+      [shipment.startLat, shipment.startLong],
+      [shipment.endLat, shipment.endLong]);
+    this.testPloyline = polylineGraphic;
+    
+    if (shipment.currentPathIndex == undefined || shipment.currentPathIndex == null) {
+      shipment.currentPathIndex = 0;
+    }
+    if (shipment.currentPathIndex >= polylineGraphic[1].paths[0].length) {
+      shipment.currentPathIndex = polylineGraphic[1].paths[0].length - 1;
+    }
+    var long = polylineGraphic[1].paths[0][shipment.currentPathIndex][0];
+    var lat = polylineGraphic[1].paths[0][shipment.currentPathIndex][1];
+    var currentPoint = this.updateLocation(long, lat);
+    this.flisghtsGraphics.push(polylineGraphic[0]);
+    this.flisghtsGraphics.push(currentPoint);
+    this.shipmentLayer.graphics = this.flisghtsGraphics;
+    this.shipmentLayer.add(polylineGraphic[0]);
+    this.shipmentLayer.add(currentPoint);
+
+    this.map.add(this.shipmentLayer);
   }
 
   async initializeMap() {
@@ -105,7 +239,7 @@ export class MapComponent implements OnInit, OnDestroy, OnChanges {
         "esri/rest/support/FeatureSet"
       ]);
 
-      // esriConfig.apiKey = "MY_API_KEY";
+      esriConfig.apiKey = "AAPK5f5b4718c49f47fc9e6d29aefd6ddabbK0vPM7fMgOZ1FdB--pHcc6gCguIpzDHy8UWoE5habp2Ov2BFNoZ41yzfOj0JuQ5a";
 
       this._Map = Map;
       this._MapView = MapView;
@@ -187,7 +321,7 @@ export class MapComponent implements OnInit, OnDestroy, OnChanges {
       var selectedCenters = ["UPS", "FedEx", "easyBox", "FANCourier", "Cargus"];
       this.addShipmentCenters(selectedCenters);
     } else {
-      this.addAerialShipments();
+      //this.addAerialShipments();
     }
   }
 
