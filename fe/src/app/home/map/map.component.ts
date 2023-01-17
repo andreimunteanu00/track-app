@@ -23,6 +23,7 @@ import {IShip} from "../../models/ship.model";
 })
 export class MapComponent implements OnInit, OnDestroy, OnChanges {
   @Input() shipment: IShip;
+  @Input() isHome: boolean = false;
 
   @Output() mapLoadedEvent = new EventEmitter<boolean>();
 
@@ -181,12 +182,13 @@ export class MapComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   addFeatureLayers() {
-    this.shipmentCenterLayers = [];
-    var selectedCenters = ["UPS", "FedEx", "easyBox", "FANCourier", "Cargus"];
-
-    this.addShipmentCenters(selectedCenters);
-
-    this.addAerialShipments();
+    if (this.isHome) {
+      this.shipmentCenterLayers = [];
+      var selectedCenters = ["UPS", "FedEx", "easyBox", "FANCourier", "Cargus"];
+      this.addShipmentCenters(selectedCenters);
+    } else {
+      this.addAerialShipments();
+    }
   }
 
   addAerialShipments() {

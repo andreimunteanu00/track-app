@@ -1,6 +1,6 @@
 <!-- Here's the DIV that we inject the map into -->
 <div #mapViewNode></div>
-<div class="filter">
+<div *ngIf="isHome" class="filter">
     <h1 style="text-align: center">Select shipment centers</h1>
     <div class="models" style="text-align: center">
       <div class="checkbox" style="display: inline-block">
