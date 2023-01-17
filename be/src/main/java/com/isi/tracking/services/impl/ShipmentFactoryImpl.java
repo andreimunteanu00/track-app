@@ -43,6 +43,32 @@ public class ShipmentFactoryImpl implements ShipmentFactory {
             -97.0425239,
     };
 
+    private static Double[] carLatitudesEU = {
+            44.424194,
+            44.3231406,
+            44.6375877,
+            46.7833643,
+            47.156116,
+            45.7829757,
+            46.2582637,
+            45.7032073,
+            44.1809572,
+            47.0745735,
+    };
+
+    private static Double[] carLongitudesEU = {
+            26.1035651,
+            23.7366249,
+            22.6185317,
+            23.5464726,
+            27.5169306,
+            24.0697983,
+            26.7649747,
+            27.1559041,
+            28.4899222,
+            21.8674044,
+    };
+
     public Shipment makeShipment(Long trackingNumber) {
         Random random = new Random();
 
@@ -69,31 +95,24 @@ public class ShipmentFactoryImpl implements ShipmentFactory {
                 int startAirportIndex = random.nextInt(airportLatitudes.length);
                 int endAirportIndex = random.nextInt(airportLatitudes.length);
 
-                shipment.setStartLat(airportLatitudes[startAirportIndex]);
-                shipment.setStartLong(airportLongitudes[startAirportIndex]);
+                shipment.setStartLat(airportLongitudes[startAirportIndex]);
+                shipment.setStartLong(airportLatitudes[startAirportIndex]);
 
-                shipment.setEndLat(airportLatitudes[endAirportIndex]);
-                shipment.setEndLong(airportLongitudes[endAirportIndex]);
-
-                shipment.setCurrentPathIndex(10);
-            }
-
-            case AQUATIC -> {
-                shipment.setStartLat(random.nextDouble(-90, 90));
-                shipment.setStartLong(random.nextDouble(-180, 180));
-
-                shipment.setStartLat(random.nextDouble(-90, 90));
-                shipment.setStartLong(random.nextDouble(-180, 180));
+                shipment.setEndLat(airportLongitudes[endAirportIndex]);
+                shipment.setEndLong(airportLatitudes[endAirportIndex]);
 
                 shipment.setCurrentPathIndex(10);
             }
 
             case TERRESTRIAL -> {
-                shipment.setStartLat(random.nextDouble(-90, 90));
-                shipment.setStartLong(random.nextDouble(-180, 180));
+                int startCarIndex = random.nextInt(carLatitudesEU.length);
+                int endCarIndex = random.nextInt(carLatitudesEU.length);
 
-                shipment.setStartLat(random.nextDouble(-90, 90));
-                shipment.setStartLong(random.nextDouble(-180, 180));
+                shipment.setStartLat(carLongitudesEU[startCarIndex]);
+                shipment.setStartLong(carLatitudesEU[startCarIndex]);
+
+                shipment.setEndLat(carLongitudesEU[endCarIndex]);
+                shipment.setEndLong(carLatitudesEU[endCarIndex]);
 
                 shipment.setCurrentPathIndex(10);
             }
