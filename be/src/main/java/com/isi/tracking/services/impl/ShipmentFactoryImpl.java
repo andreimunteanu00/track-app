@@ -38,8 +38,16 @@ public class ShipmentFactoryImpl implements ShipmentFactory {
         int carrierIndex = random.nextInt(carriers.length);
         shipment.setCarrier(carriers[carrierIndex]);
 
-        shipment.setCurrentLat(random.nextDouble(-90, 90));
-        shipment.setCurrentLong(random.nextDouble(-180, 180));
+        shipment.setStartLat(random.nextDouble(-90, 90));
+        shipment.setStartLong(random.nextDouble(-180, 180));
+
+        shipment.setStartLat(random.nextDouble(-90, 90));
+        shipment.setStartLong(random.nextDouble(-180, 180));
+
+        shipment.setCurrentPathIndex(10);
+
+        shipment.setCurrentLat(shipment.getStartLat());
+        shipment.setCurrentLong(shipment.getCurrentLong());
 
         return shipment;
     }
