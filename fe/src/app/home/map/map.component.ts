@@ -83,7 +83,7 @@ export class MapComponent implements OnInit, OnDestroy, OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     //this.changeShipmentInfo(changes.shipment.currentValue);
     
-    if (changes.shipment.previousValue) {
+    if (changes?.shipment?.previousValue) {
       if ("AERIAL" == changes.shipment.previousValue.shippingMethod) {
         this.map.remove(this.shipmentLayer);
       } else if ("TERRESTRIAL" == changes.shipment.previousValue.shippingMethod) {
@@ -94,9 +94,9 @@ export class MapComponent implements OnInit, OnDestroy, OnChanges {
       }
     }
     
-    if ("AERIAL" == changes.shipment.currentValue.shippingMethod) {
+    if ("AERIAL" == changes.shipment.currentValue?.shippingMethod) {
       this.addAerialShipmentLayer(changes.shipment.currentValue);
-    } else if ("TERRESTRIAL" == changes.shipment.currentValue.shippingMethod) {
+    } else if ("TERRESTRIAL" == changes.shipment.currentValue?.shippingMethod) {
       this.addTerrestrialLayer(changes.shipment.currentValue);
     }
   }
