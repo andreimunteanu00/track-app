@@ -5,7 +5,6 @@
     </div>
     <div class="col scroll">
       <div *ngFor="let ship of shipments" class="col-sm-4">
-        <div class="card" style="width: 18rem;">
         <div class="card" style="width: 18rem;"
              [ngStyle]="{
               'background-color': (ship.shippingMethod == 'TERRESTRIAL') ? '#9c562a'
@@ -24,7 +23,6 @@
   <div class="col-10" style="padding-left: 2.5rem; padding-right: -10rem; max-width: 80vw">
     <app-map style="padding: 0"></app-map>
   </div>
-</div>
 </div>
 
 <modal #myModal>
