@@ -24,7 +24,6 @@ import {IShip} from "../../models/ship.model";
 export class MapComponent implements OnInit, OnDestroy, OnChanges {
   @Input() shipment: IShip;
 
-
   @Output() mapLoadedEvent = new EventEmitter<boolean>();
 
   // The <div> where we will place the map
