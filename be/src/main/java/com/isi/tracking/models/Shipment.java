@@ -21,4 +21,9 @@ public class Shipment {
     private Long trackingNumber;
     private Double currentLat;
     private Double currentLong;
+    private Double startLat;
+    private Double startLong;
+    private Double endLat;
+    private Double endLong;
+    private Integer currentPathIndex;
 }

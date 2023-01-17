@@ -11,6 +11,11 @@ export interface IShip {
   trackingNumber?: number | undefined | null;
   currentLat?: number | undefined | null;
   currentLong?: number | undefined | null;
+  startLat?: number | undefined | null;
+  startLong?: number | undefined | null;
+  endLat?: number | undefined | null;
+  endLong?: number | undefined | null;
+  currentPathIndex?: number | undefined | null;
 }
 
 /*

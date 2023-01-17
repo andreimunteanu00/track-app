@@ -13,8 +13,7 @@ import { setDefaultOptions, loadModules } from 'esri-loader';
 // @ts-ignore
 import esri = __esri; // Esri TypeScript Types
 import { ShipmentCenter } from '../../models/shipment-center.model';
-import {IShip} from "../../models/ship.model";
-
+import { IShip } from '../../models/ship.model';
 
 @Component({
   selector: 'app-map',
@@ -39,6 +38,9 @@ export class MapComponent implements OnInit, OnDestroy, OnChanges {
   _RouteParameters;
   _FeatureSet;
   _Point;
+  _Polyline;
+  _Polygon;
+  _geodesicUtils;
   _locator;
 
   // Instances
@@ -64,6 +66,10 @@ export class MapComponent implements OnInit, OnDestroy, OnChanges {
     "Cargus": {"url": "https://i.postimg.cc/dtmD1t4j/logo-cargus.png", "width": "25px", "height": "20px"}
   };
   shipmentCenterLayers: any[];
+  aerialCurrentLocation: {};
+  aerialLayer: any;
+  flisghtsGraphics: any[];
+  testPloyline: any[];
 
   lastPoint: any;
 
@@ -81,13 +87,16 @@ export class MapComponent implements OnInit, OnDestroy, OnChanges {
       setDefaultOptions({ css: true });
 
       // Load the modules for the ArcGIS API for JavaScript
-      const [esriConfig, Map, MapView, FeatureLayer, Graphic, Point, GraphicsLayer, route, RouteParameters, FeatureSet] = await loadModules([
+      const [esriConfig, Map, MapView, FeatureLayer, Graphic, Point, Polyline, Polygon, geodesicUtils, GraphicsLayer, route, RouteParameters, FeatureSet] = await loadModules([
         "esri/config",
         "esri/Map",
         "esri/views/MapView",
         "esri/layers/FeatureLayer",
         "esri/Graphic",
         "esri/geometry/Point",
+        "esri/geometry/Polyline",
+        "esri/geometry/Polygon",
+        "esri/geometry/support/geodesicUtils",
         "esri/layers/GraphicsLayer",
         "esri/rest/route",
         "esri/rest/support/RouteParameters",
@@ -105,6 +114,11 @@ export class MapComponent implements OnInit, OnDestroy, OnChanges {
       this._RouteParameters = RouteParameters;
       this._FeatureSet = FeatureSet;
       this._Point = Point;
+      this._Polyline = Polyline;
+      this._Polygon = Polygon;
+      this._geodesicUtils = geodesicUtils;
+
+      this.aerialCurrentLocation = {};
 
       // Configure the Map
       const mapProperties = {
@@ -171,9 +185,134 @@ export class MapComponent implements OnInit, OnDestroy, OnChanges {
     var selectedCenters = ["UPS", "FedEx", "easyBox", "FANCourier", "Cargus"];
 
     this.addShipmentCenters(selectedCenters);
+
+    this.addAerialShipments();
+  }
+
+  addAerialShipments() {
+    this.map.remove(this.aerialLayer);
+    this.flisghtsGraphics = [];
+    this.aerialLayer = new this._GraphicsLayer({
+      graphics: this.flisghtsGraphics
+    });
+
+    // var polylineGraphic = this.createGeodesicLineAndUpdateCurrentPos([-0.11259218103538629, 51.45930264413967], [-74.09000007051907, 4.692707636587198]);
+    // this.testPloyline = polylineGraphic;
+    // this.flisghtsGraphics.push(polylineGraphic[0]);
+
+    // this.aerialCurrentLocation["1234"] = [0, null];
+    // if (this.aerialCurrentLocation["1234"][1] != null) {
+    //   const idx = this.flisghtsGraphics.indexOf(this.aerialCurrentLocation["1234"][1]);
+    //   this.flisghtsGraphics.splice(idx, 1);
+    // }
+    // var currentPoint = this.updateLocation("1234", polylineGraphic[1]);
+    // this.flisghtsGraphics.push(currentPoint);
+    // this.aerialLayer.graphics = this.flisghtsGraphics;
+    // this.aerialLayer.add(polylineGraphic[0]);
+    // this.aerialLayer.add(currentPoint);
+
+    this.http.get<Array<IShip>>('http://localhost:8080/api/shipment/my', {observe:"response"})
+      .subscribe(response => {
+        console.log(response.body);
+
+        for (let shipment of response.body) {
+          if ("AERIAL" == shipment.shippingMethod) {
+            var polylineGraphic = this.createGeodesicLineAndUpdateCurrentPos([shipment.startLat, shipment.startLong], [shipment.endLat, shipment.endLong]);
+            this.testPloyline = polylineGraphic;
+
+            if (shipment.currentPathIndex >= polylineGraphic[1].paths[0].length) {
+              shipment.currentPathIndex = polylineGraphic[1].paths[0].length - 1;
+            }
+            var currentPoint = this.updateLocation(polylineGraphic[1].paths[0][shipment.currentPathIndex][0], polylineGraphic[1].paths[0][shipment.currentPathIndex][1]);
+            this.flisghtsGraphics.push(polylineGraphic[0]);
+            this.flisghtsGraphics.push(currentPoint);
+            this.aerialLayer.graphics = this.flisghtsGraphics;
+            this.aerialLayer.add(polylineGraphic[0]);
+            this.aerialLayer.add(currentPoint);
+          }
+        }
+      });
+
+    this.map.add(this.aerialLayer);
+  }
+
+  updateLocation(long: number, lat: number) {
+    const point = {
+      type: "point",
+      longitude: long,
+      latitude: lat
+    };
+    const markerExtent = {
+      xmin: -76.492706,
+      xmax: -76.488920,
+      ymin: 38.978750,
+      ymax: 38.980800
+    }
+    const symbolMarker = {
+      type: "simple-marker"
+    };
+    const graphicPoint = new this._Graphic({
+      geometry: point,
+      symbol: symbolMarker
+    });
+
+    return graphicPoint;
+  }
+
+  // updateLocation(shipmentId: string, densifiedPolyline: any) {
+  //   const point = {
+  //     type: "point",
+  //     longitude: densifiedPolyline.paths[0][this.aerialCurrentLocation[shipmentId][0]][0],
+  //     latitude: densifiedPolyline.paths[0][this.aerialCurrentLocation[shipmentId][0]][1]
+  //   };
+  //   const markerExtent = {
+  //     xmin: -76.492706,
+  //     xmax: -76.488920,
+  //     ymin: 38.978750,
+  //     ymax: 38.980800
+  //   }
+  //   const symbolMarker = {
+  //     type: "simple-marker"
+  //   };
+  //   const graphicPoint = new this._Graphic({
+  //     geometry: point,
+  //     symbol: symbolMarker
+  //   });
+  //   if (this.aerialCurrentLocation[shipmentId][0] < densifiedPolyline.paths[0].length - 1) {
+  //     this.aerialCurrentLocation[shipmentId][0]++;
+  //   }
+  //   this.aerialCurrentLocation[shipmentId][1] = graphicPoint;
+
+  //   return graphicPoint;
+  // }
+
+  createGeodesicLineAndUpdateCurrentPos(pointA: number[], pointB: number[]) {
+    var polyline = new this._Polyline({
+      paths: [
+        pointA,
+        pointB
+      ]
+    });
+    const simpleLineSymbol = {
+      type: "simple-line",
+      color: [226, 119, 40], // Orange
+      width: 2
+    };
+    const densifiedPolyline = this._geodesicUtils.geodesicDensify(polyline, 50000);
+    console.log(densifiedPolyline);
+    const graphicPolyLine = new this._Graphic({
+      geometry: densifiedPolyline,
+      symbol: simpleLineSymbol
+    })
+
+    return [graphicPolyLine, densifiedPolyline];
   }
 
   addShipmentCenters(centers: any[]) {
+    var graphicPoints = [];
+    const layerPoint = new this._GraphicsLayer({
+          graphics: graphicPoints
+        });
 
     this.http.get<Array<ShipmentCenter>>('http://localhost:8080/api/center', {observe:"response"})
       .subscribe(response => {
@@ -205,15 +344,15 @@ export class MapComponent implements OnInit, OnDestroy, OnChanges {
             geometry: point,
             symbol: symbolMarker
           });
-          const layerPoint = new this._GraphicsLayer({
-            graphics: [graphicPoint]
-          });
+          graphicPoints.push(graphicPoint);
+          layerPoint.graphics = graphicPoints;
           layerPoint.add(graphicPoint);
-          this.shipmentCenterLayers.push(layerPoint);
-          this.map.add(layerPoint);
         }
       })
 
+
+    this.shipmentCenterLayers.push(layerPoint);
+    this.map.add(layerPoint);
   }
 
   change() {
@@ -374,6 +513,16 @@ export class MapComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   animatePointDemo() {
+    // if (this.aerialCurrentLocation["1234"][1] != null) {
+    //   const idx = this.flisghtsGraphics.indexOf(this.aerialCurrentLocation["1234"][1]);
+    //   this.flisghtsGraphics.splice(idx, 1);
+    // }
+    // var currentPoint = this.updateLocation("1234", this.testPloyline[1]);
+    // this.flisghtsGraphics.push(currentPoint);
+    // this.aerialLayer.graphics = this.flisghtsGraphics;
+    // this.aerialLayer.add(this.testPloyline[0]);
+    // this.aerialLayer.add(currentPoint);
+
     this.removePoint();
     switch (this.dir) {
       case 0:
