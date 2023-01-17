@@ -55,4 +55,8 @@ export class HistoryListComponent implements OnInit {
       }
     })
   }
+
+  selectShipment(shipment) {
+    this.selectedShipment = shipment;
+  }
 }
