@@ -24,6 +24,7 @@
     "arcgis-js-api": "^4.25.0",
     "bootstrap": "^5.2.3",
     "esri-loader": "^3.7.0",
+    "ngb-modal": "^2.0.3",
     "rxjs": "~7.5.0",
     "sweetalert2": "^11.7.0",
     "tslib": "^2.3.0",

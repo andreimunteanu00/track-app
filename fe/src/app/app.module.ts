@@ -8,7 +8,7 @@ import { NavbarComponent } from './util/navbar/navbar.component';
 import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import {AuthService} from "./auth/auth.service";
 import {JWT_OPTIONS, JwtHelperService} from "@auth0/angular-jwt";
-import {ReactiveFormsModule} from "@angular/forms";
+import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import { LoginComponent } from './auth/login/login.component';
 import { SignupComponent } from './auth/signup/signup.component';
 import {AuthInterceptor} from "./util/interceptors/auth.interceptor";
@@ -20,6 +20,7 @@ import {AuthGuard} from "./util/guards/auth.guard";
 import { MapComponent } from './home/map/map.component';
 import { HistoryComponent } from './home/history/history.component';
 import { HistoryListComponent } from './home/history/history-list/history-list.component';
+import {ModalModule} from "ngb-modal";
 
 @NgModule({
   declarations: [
@@ -38,7 +39,9 @@ import { HistoryListComponent } from './home/history/history-list/history-list.c
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    ModalModule,
+    FormsModule
   ],
   providers: [
     AuthService,

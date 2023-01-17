@@ -7,7 +7,7 @@ import {
   Input,
   Output,
   EventEmitter,
-  OnDestroy
+  OnDestroy, OnChanges, SimpleChanges
 } from "@angular/core";
 import { setDefaultOptions, loadModules } from 'esri-loader';
 // @ts-ignore
@@ -20,7 +20,10 @@ import { IShip } from '../../models/ship.model';
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.css']
 })
-export class MapComponent implements OnInit, OnDestroy{
+export class MapComponent implements OnInit, OnDestroy, OnChanges {
+  @Input() shipment: IShip;
+
+
   @Output() mapLoadedEvent = new EventEmitter<boolean>();
 
   // The <div> where we will place the map
@@ -56,18 +59,26 @@ export class MapComponent implements OnInit, OnDestroy{
   dir: number = 0;
   count: number = 0;
   timeoutHandler = null;
-  shipmentComapanyLogoURLs = {"UPS": {"url": "https://i.postimg.cc/RFPcCDcs/ups.png", "width": "20px", "height": "25px"},
+  shipmentComapanyLogoURLs = {
+    "UPS": {"url": "https://i.postimg.cc/RFPcCDcs/ups.png", "width": "20px", "height": "25px"},
     "FedEx": {"url": "https://i.postimg.cc/JzHmVZpV/FedEx.png", "width": "25px", "height": "20px"},
     "easyBox": {"url": "https://i.postimg.cc/GpvFh1T0/sameday-easybox.png", "width": "25px", "height": "20px"},
     "FANCourier": {"url": "https://i.postimg.cc/fbH9bTWr/Logo-Fan-Courier-svg.png", "width": "25px", "height": "20px"},
-    "Cargus": {"url": "https://i.postimg.cc/dtmD1t4j/logo-cargus.png", "width": "25px", "height": "20px"}};
+    "Cargus": {"url": "https://i.postimg.cc/dtmD1t4j/logo-cargus.png", "width": "25px", "height": "20px"}
+  };
   shipmentCenterLayers: any[];
   aerialCurrentLocation: {};
   aerialLayer: any;
   flisghtsGraphics: any[];
   testPloyline: any[];
 
+  lastPoint: any;
+
   constructor(protected http: HttpClient) {
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    this.changeShipmentInfo(changes.shipment.currentValue);
   }
 
   async initializeMap() {
@@ -128,6 +139,7 @@ export class MapComponent implements OnInit, OnDestroy{
         map: this.map
       };
 
+
       this.view = new MapView(mapViewProperties);
 
       // Fires `pointer-move` event when user clicks on "Shift"
@@ -147,6 +159,27 @@ export class MapComponent implements OnInit, OnDestroy{
     }
   }
 
+  changeShipmentInfo(shipment) {
+    if (this.lastPoint) {
+      this.map.remove(this.lastPoint);
+    }
+
+    const graphicPoint = new this._Graphic({
+      geometry: {
+        type: "point",
+        latitude: shipment.currentLat,
+        longitude: shipment.currentLong,
+      },
+    });
+
+    const layerPoint = new this._GraphicsLayer({
+      graphics: [graphicPoint],
+    });
+
+    this.lastPoint = layerPoint;
+
+    this.map.add(layerPoint);
+  }
 
   addFeatureLayers() {
     this.shipmentCenterLayers = [];
@@ -187,7 +220,7 @@ export class MapComponent implements OnInit, OnDestroy{
           if ("AERIAL" == shipment.shippingMethod) {
             var polylineGraphic = this.createGeodesicLineAndUpdateCurrentPos([shipment.startLat, shipment.startLong], [shipment.endLat, shipment.endLong]);
             this.testPloyline = polylineGraphic;
-            
+
             if (shipment.currentPathIndex >= polylineGraphic[1].paths[0].length) {
               shipment.currentPathIndex = polylineGraphic[1].paths[0].length - 1;
             }
@@ -200,7 +233,7 @@ export class MapComponent implements OnInit, OnDestroy{
           }
         }
       });
-    
+
     this.map.add(this.aerialLayer);
   }
 
@@ -317,8 +350,8 @@ export class MapComponent implements OnInit, OnDestroy{
           layerPoint.add(graphicPoint);
         }
       })
-      
-    
+
+
     this.shipmentCenterLayers.push(layerPoint);
     this.map.add(layerPoint);
   }
@@ -330,29 +363,29 @@ export class MapComponent implements OnInit, OnDestroy{
       models: this.getClassOfCheckedCheckboxes(modelCbs),
       processors: this.getClassOfCheckedCheckboxes(processorCbs)
     };
-  
+
     this.filterResults(filters);
   }
-  
+
   getClassOfCheckedCheckboxes(checkboxes) {
     var classes = [];
-  
+
     if (checkboxes && checkboxes.length > 0) {
       for (var i = 0; i < checkboxes.length; i++) {
         var cb = checkboxes[i];
-  
+
         if (cb.checked) {
           classes.push(cb.getAttribute("rel"));
         }
       }
     }
-  
+
     return classes;
   }
-  
+
   filterResults(filters) {
     var selectedCenters = [];
-  
+
     for (var j = 0; j < filters.models.length; j++) {
       selectedCenters.push(filters.models[j]);
     }
