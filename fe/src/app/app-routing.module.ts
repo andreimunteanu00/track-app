@@ -18,10 +18,12 @@ const routes: Routes = [
   {
     path: "history-list",
     component: HistoryListComponent,
+    canActivate: [AuthGuard]
   },
   {
     path: "**",
-    component: HomeComponent
+    component: HomeComponent,
+    canActivate: [AuthGuard]
   },
   {
     path: "home",
