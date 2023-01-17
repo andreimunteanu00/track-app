@@ -21,7 +21,6 @@
     "@arcgis/core": "^4.25.5",
     "@auth0/angular-jwt": "^5.1.2",
     "@types/arcgis-js-api": "^4.25.0",
-    "arcgis-js-api": "^4.25.0",
     "bootstrap": "^5.2.3",
     "esri-loader": "^3.7.0",
     "ngb-modal": "^2.0.3",

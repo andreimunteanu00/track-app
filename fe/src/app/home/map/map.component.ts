@@ -53,7 +53,6 @@ export class MapComponent implements OnInit, OnDestroy, OnChanges {
   center: Array<number> = [26.103030, 44.435408];
   basemap = "streets-vector";
   loaded = false;
-  pointCoords: number[] = [26.103030, 44.435408];
   dir: number = 0;
   count: number = 0;
   timeoutHandler = null;
@@ -115,7 +114,6 @@ export class MapComponent implements OnInit, OnDestroy, OnChanges {
       this.map = new Map(mapProperties);
 
       this.addFeatureLayers();
-      this.addPoint(this.pointCoords[1], this.pointCoords[0]);
 
       // Initialize the MapView
       const mapViewProperties = {
@@ -369,38 +367,8 @@ export class MapComponent implements OnInit, OnDestroy, OnChanges {
     this.timeoutHandler = setTimeout(() => {
       // code to execute continuously until the view is closed
       // ...
-      this.animatePointDemo();
       this.runTimer();
     }, 200);
-  }
-
-  animatePointDemo() {
-    this.removePoint();
-    switch (this.dir) {
-      case 0:
-        this.pointCoords[1] += 0.01;
-        break;
-      case 1:
-        this.pointCoords[0] += 0.02;
-        break;
-      case 2:
-        this.pointCoords[1] -= 0.01;
-        break;
-      case 3:
-        this.pointCoords[0] -= 0.02;
-        break;
-    }
-
-    this.count += 1;
-    if (this.count >= 10) {
-      this.count = 0;
-      this.dir += 1;
-      if (this.dir > 3) {
-        this.dir = 0;
-      }
-    }
-
-    this.addPoint(this.pointCoords[1], this.pointCoords[0]);
   }
 
   stopTimer() {
