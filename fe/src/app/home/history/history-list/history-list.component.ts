@@ -1,6 +1,9 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {HistoryService} from "../history.service";
 import {IShip} from "../../../models/ship.model";
+import {ModalManager} from "ngb-modal";
+import Swal from "sweetalert2";
+import {HttpResponse, HttpStatusCode} from "@angular/common/http";
 
 @Component({
   selector: 'app-history-list',
@@ -10,9 +13,14 @@ import {IShip} from "../../../models/ship.model";
 export class HistoryListComponent implements OnInit {
 
   shipments: IShip[];
+  trackNumber: number;
+  @ViewChild('myModal') myModal;
   selectedShipment: IShip;
 
-  constructor(private historyService: HistoryService) {}
+  constructor(
+    private historyService: HistoryService,
+    private modalService: ModalManager,
+    ) {}
 
   ngOnInit(): void {
     this.historyService.getUserShipments().subscribe((res: IShip[]) => {
@@ -20,8 +28,32 @@ export class HistoryListComponent implements OnInit {
     })
   }
 
-  newShipment() {
+  openNewShipmentModal() {
+    this.modalService.open(this.myModal, {
+      size: "md",
+      modalClass: 'mymodal',
+      hideCloseButton: true,
+      centered: true,
+      backdrop: true,
+      animation: true,
+      keyboard: false,
+      closeOnOutsideClick: true,
+      backdropClass: "modal-backdrop"
+    });
+  }
 
+  newShipment(trackNumber: number) {
+    this.historyService.createShipmentByTrackNumber(trackNumber).subscribe(res => {
+      if (res.status === HttpStatusCode.Created) {
+        Swal.fire({
+          icon: "success",
+          showConfirmButton: false
+        }).then(value => {
+          this.modalService.close(this.myModal);
+          window.location.reload();
+        })
+      }
+    })
   }
 
   selectShipment(shipment) {
