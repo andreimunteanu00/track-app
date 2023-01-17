@@ -17,6 +17,32 @@ import java.util.Random;
 public class ShipmentFactoryImpl implements ShipmentFactory {
     private AuthService authService;
 
+    private static Double[] airportLatitudes = {
+            35.5387974,
+            31.18765,
+            51.8762646,
+            44.3127651,
+            33.9415889,
+            40.6413113,
+            49.0080713,
+            39.9803176,
+            52.3661052,
+            32.8998091,
+    };
+
+    private static Double[] airportLongitudes = {
+            139.7826839,
+            121.3485213,
+            -0.373935,
+            23.8764024,
+            -118.4107187,
+            -73.780327,
+            2.548755,
+            -2.8222503,
+            13.4947791,
+            -97.0425239,
+    };
+
     public Shipment makeShipment(Long trackingNumber) {
         Random random = new Random();
 
@@ -38,13 +64,42 @@ public class ShipmentFactoryImpl implements ShipmentFactory {
         int carrierIndex = random.nextInt(carriers.length);
         shipment.setCarrier(carriers[carrierIndex]);
 
-        shipment.setStartLat(random.nextDouble(-90, 90));
-        shipment.setStartLong(random.nextDouble(-180, 180));
+        switch (shippingMethods[shippingMethodIndex]) {
+            case AERIAL -> {
+                int startAirportIndex = random.nextInt(airportLatitudes.length);
+                int endAirportIndex = random.nextInt(airportLatitudes.length);
 
-        shipment.setStartLat(random.nextDouble(-90, 90));
-        shipment.setStartLong(random.nextDouble(-180, 180));
+                shipment.setStartLat(airportLatitudes[startAirportIndex]);
+                shipment.setStartLong(airportLongitudes[startAirportIndex]);
 
-        shipment.setCurrentPathIndex(10);
+                shipment.setEndLat(airportLatitudes[endAirportIndex]);
+                shipment.setEndLong(airportLongitudes[endAirportIndex]);
+
+                shipment.setCurrentPathIndex(10);
+            }
+
+            case AQUATIC -> {
+                shipment.setStartLat(random.nextDouble(-90, 90));
+                shipment.setStartLong(random.nextDouble(-180, 180));
+
+                shipment.setStartLat(random.nextDouble(-90, 90));
+                shipment.setStartLong(random.nextDouble(-180, 180));
+
+                shipment.setCurrentPathIndex(10);
+            }
+
+            case TERRESTRIAL -> {
+                shipment.setStartLat(random.nextDouble(-90, 90));
+                shipment.setStartLong(random.nextDouble(-180, 180));
+
+                shipment.setStartLat(random.nextDouble(-90, 90));
+                shipment.setStartLong(random.nextDouble(-180, 180));
+
+                shipment.setCurrentPathIndex(10);
+            }
+        }
+
+
 
         shipment.setCurrentLat(shipment.getStartLat());
         shipment.setCurrentLong(shipment.getCurrentLong());
