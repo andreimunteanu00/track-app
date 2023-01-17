@@ -15,6 +15,7 @@ export class HistoryListComponent implements OnInit {
   shipments: IShip[];
   trackNumber: number;
   @ViewChild('myModal') myModal;
+  selectedShipment: IShip;
 
   constructor(
     private historyService: HistoryService,
@@ -41,7 +42,7 @@ export class HistoryListComponent implements OnInit {
     });
   }
 
-  newShipment(trackNumber: number){
+  newShipment(trackNumber: number) {
     this.historyService.createShipmentByTrackNumber(trackNumber).subscribe(res => {
       if (res.status === HttpStatusCode.Created) {
         Swal.fire({
