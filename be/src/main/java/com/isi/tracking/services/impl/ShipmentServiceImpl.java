@@ -156,7 +156,7 @@ public class ShipmentServiceImpl implements ShipmentService {
             ).collect(Collectors.toList());
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
-                    String.format("Getting shipment by id: %s failed with exception:\n%s", e.getMessage()));
+                    String.format("Getting shipments failed with exception:\n%s", e.getMessage()));
         }
     }
 }

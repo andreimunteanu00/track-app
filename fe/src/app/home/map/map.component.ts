@@ -14,6 +14,7 @@ import { setDefaultOptions, loadModules } from 'esri-loader';
 import esri = __esri; // Esri TypeScript Types
 import { ShipmentCenter } from '../../models/shipment-center.model';
 import {IShip} from "../../models/ship.model";
+import GoTo = __esri.GoTo;
 
 
 @Component({
@@ -76,13 +77,13 @@ export class MapComponent implements OnInit, OnDestroy, OnChanges {
   testPloyline: any[];
 
   lastPoint: any;
-
+  currentIndexPoint: any;
   constructor(protected http: HttpClient) {
   }
 
   ngOnChanges(changes: SimpleChanges) {
     //this.changeShipmentInfo(changes.shipment.currentValue);
-    
+
     if (changes?.shipment?.previousValue) {
       if ("AERIAL" == changes.shipment.previousValue.shippingMethod) {
         this.map.remove(this.shipmentLayer);
@@ -93,12 +94,26 @@ export class MapComponent implements OnInit, OnDestroy, OnChanges {
         console.log("Map from last shipment TERRESTRIAL " + this.map);
       }
     }
-    
+
     if ("AERIAL" == changes.shipment.currentValue?.shippingMethod) {
       this.addAerialShipmentLayer(changes.shipment.currentValue);
     } else if ("TERRESTRIAL" == changes.shipment.currentValue?.shippingMethod) {
       this.addTerrestrialLayer(changes.shipment.currentValue);
     }
+
+    let zoomLat = (changes.shipment.currentValue.startLat + changes.shipment.currentValue.endLat) / 2
+    let zoomLong = (changes.shipment.currentValue.startLong + changes.shipment.currentValue.endLong) / 2
+
+    let diffLong = Math.abs(changes.shipment.currentValue.startLong - changes.shipment.currentValue.endLong);
+    diffLong = 10 - Math.floor(diffLong / 20);
+    console.log(this.currentIndexPoint);
+    this.view.goTo({
+      center: [
+        changes.shipment.currentValue.startLat,
+        changes.shipment.currentValue.startLong,
+      ],
+      zoom: 6
+    }).catch(reason => console.log(reason))
   }
 
   addTerrestrialLayer(shipment: any) {
@@ -160,6 +175,9 @@ export class MapComponent implements OnInit, OnDestroy, OnChanges {
         this.terrestrialPointsLayer = new this._GraphicsLayer({
           graphics: graphicPoints
         });
+
+        this.currentIndexPoint = currrentPoint;
+
         graphicPoints.push(currrentPoint);
         this.terrestrialPointsLayer.graphics = graphicPoints;
         this.terrestrialPointsLayer.add(currrentPoint);
@@ -197,7 +215,7 @@ export class MapComponent implements OnInit, OnDestroy, OnChanges {
       [shipment.startLat, shipment.startLong],
       [shipment.endLat, shipment.endLong]);
     this.testPloyline = polylineGraphic;
-    
+
     if (shipment.currentPathIndex == undefined || shipment.currentPathIndex == null) {
       shipment.currentPathIndex = 0;
     }
@@ -207,6 +225,7 @@ export class MapComponent implements OnInit, OnDestroy, OnChanges {
     var long = polylineGraphic[1].paths[0][shipment.currentPathIndex][0];
     var lat = polylineGraphic[1].paths[0][shipment.currentPathIndex][1];
     var currentPoint = this.updateLocation(long, lat);
+    this.currentIndexPoint = currentPoint;
     this.flisghtsGraphics.push(polylineGraphic[0]);
     this.flisghtsGraphics.push(currentPoint);
     this.shipmentLayer.graphics = this.flisghtsGraphics;
