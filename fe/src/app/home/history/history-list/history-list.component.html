@@ -7,8 +7,8 @@
       <div *ngFor="let ship of shipments" class="col-sm-4">
         <div class="card" style="width: 18rem;"
              [ngStyle]="{
-              'background-color': (ship.shippingMethod == 'TERRESTRIAL') ? '#9c562a'
-                : ((ship.shippingMethod == 'AERIAL') ? '#d5f0ea' : '#3782ab')}">
+              'background-color': (ship.shippingMethod == 'TERRESTRIAL') ? '#FFE5CC'
+                : ((ship.shippingMethod == 'AERIAL') ? '#CCFFFF' : '#3782ab')}">
           <div class="card-body">
             <h5 class="card-title" style="text-align: center">Tracking number: {{ship?.trackingNumber}}</h5>
             <p class="card-text" style="text-align: center">Start date: {{ ship.startDate ? (ship.startDate | date: 'dd/MM/yyyy') : 'undefined' }}</p>

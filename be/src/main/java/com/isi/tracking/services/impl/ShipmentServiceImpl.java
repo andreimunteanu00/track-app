@@ -14,6 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 import com.isi.tracking.models.Shipment;
 import com.isi.tracking.services.ShipmentService;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -41,7 +42,7 @@ public class ShipmentServiceImpl implements ShipmentService {
                     queryDocumentSnapshot -> queryDocumentSnapshot.toObject(Shipment.class)
             ).filter(
                     shipment -> shipment.getUserId().equals(authService.getCurrentUsername())
-            ).collect(Collectors.toList());
+            ).sorted((f1, f2) -> Long.compare(f2.getTrackingNumber(), f1.getTrackingNumber())).collect(Collectors.toList());
 
             return shipments;
         } catch (Exception e) {
