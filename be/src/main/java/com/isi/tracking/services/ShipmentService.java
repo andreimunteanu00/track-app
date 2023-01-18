@@ -15,4 +15,8 @@ public interface ShipmentService {
     Shipment updateShipment(Shipment shipment);
 
     void deleteShipment(String id);
+
+    void updateAllShipments(List<Shipment> shipments);
+
+    List<Shipment> getAllShipments();
 }

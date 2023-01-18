@@ -57,6 +57,8 @@ export class HistoryListComponent implements OnInit {
   }
 
   selectShipment(shipment) {
-    this.selectedShipment = shipment;
+    this.historyService.updateShipmentFromBE(shipment.id).subscribe(shipment => {
+      this.selectedShipment = shipment
+    })
   }
 }

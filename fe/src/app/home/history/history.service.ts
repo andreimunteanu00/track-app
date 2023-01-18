@@ -23,4 +23,8 @@ export class HistoryService implements OnInit {
   createShipmentByTrackNumber(trackNumber: number) {
     return this.http.post(this.resourceUrl + '/' + trackNumber, null, {observe: "response"});
   }
+
+  updateShipmentFromBE(id) {
+    return this.http.get(this.resourceUrl + '/' + id);
+  }
 }

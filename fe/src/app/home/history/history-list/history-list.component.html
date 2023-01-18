@@ -10,8 +10,10 @@
               'background-color': (ship.shippingMethod == 'TERRESTRIAL') ? '#9c562a'
                 : ((ship.shippingMethod == 'AERIAL') ? '#d5f0ea' : '#3782ab')}">
           <div class="card-body">
-            <h5 class="card-title" style="text-align: center">{{ship?.trackingNumber}}</h5>
-            <p class="card-text" style="text-align: center">{{ ship.startDate ? (ship.startDate | date: 'dd/MM/yyyy') : 'undefined' }}</p>
+            <h5 class="card-title" style="text-align: center">Tracking number: {{ship?.trackingNumber}}</h5>
+            <p class="card-text" style="text-align: center">Start date: {{ ship.startDate ? (ship.startDate | date: 'dd/MM/yyyy') : 'undefined' }}</p>
+            <p class="card-text" style="text-align: center">Estimated time of arrival: <br>{{ ship.endDate ? (ship.endDate | date: 'dd/MM/yyyy') : 'undefined' }}</p>
+            <p class="card-text" style="text-align: center">Carrier: {{ ship?.carrier }}</p>
             <div style="text-align: center">
               <button (click)="selectShipment(ship)" type="button" class="btn btn-dark">Check shipment</button>
             </div>

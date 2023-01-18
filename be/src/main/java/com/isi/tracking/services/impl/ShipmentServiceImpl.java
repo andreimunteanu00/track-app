@@ -127,4 +127,35 @@ public class ShipmentServiceImpl implements ShipmentService {
             logger.error("Error while deleting shipment", e);
         }
     }
+
+    @Override
+    public void updateAllShipments(List<Shipment> shipments) {
+        try {
+            logger.info("Updating all shipments");
+            shipments.forEach(this::updateShipment);
+            logger.info("Updated");
+        } catch (Exception e) {
+            logger.error("Error while storing shipment", e);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    String.format("Storing shipment failed with exception:\n%s", e.getMessage()));
+        }
+    }
+
+    @Override
+    public List<Shipment> getAllShipments() {
+        try {
+            Firestore firestore = FirestoreClient.getFirestore();
+            ApiFuture<QuerySnapshot> future = firestore.collection(COLLECTION).get();
+
+            QuerySnapshot querySnapshot = future.get();
+            List<QueryDocumentSnapshot> documentSnapshots = querySnapshot.getDocuments();
+
+            return documentSnapshots.stream().map(
+                    queryDocumentSnapshot -> queryDocumentSnapshot.toObject(Shipment.class)
+            ).collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR,
+                    String.format("Getting shipment by id: %s failed with exception:\n%s", e.getMessage()));
+        }
+    }
 }

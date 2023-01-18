@@ -104,7 +104,7 @@ public class ShipmentFactoryImpl implements ShipmentFactory {
                 shipment.setEndLat(airportLongitudes[endAirportIndex]);
                 shipment.setEndLong(airportLatitudes[endAirportIndex]);
 
-                shipment.setCurrentPathIndex(10);
+                shipment.setCurrentPathIndex(random.nextInt(0, 10));
             }
 
             case TERRESTRIAL -> {
@@ -117,7 +117,7 @@ public class ShipmentFactoryImpl implements ShipmentFactory {
                 shipment.setEndLat(carLongitudesEU[endCarIndex]);
                 shipment.setEndLong(carLatitudesEU[endCarIndex]);
 
-                shipment.setCurrentPathIndex(10);
+                shipment.setCurrentPathIndex(random.nextInt(0, 10));
             }
         }
 
