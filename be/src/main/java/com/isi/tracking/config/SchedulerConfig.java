@@ -20,7 +20,7 @@ public class SchedulerConfig {
     private final ShipmentService shipmentService;
     private final AuthService authService;
 
-    @Scheduled(fixedDelay = 1000 * 10)
+    @Scheduled(fixedDelay = 1000 * 60 * 15)
     private void updateShipment() {
         List<Shipment> shipmentArrayList = shipmentService.getAllShipments();
         shipmentArrayList.forEach(shipment -> {
