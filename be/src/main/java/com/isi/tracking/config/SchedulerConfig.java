@@ -18,7 +18,6 @@ import java.util.List;
 public class SchedulerConfig {
 
     private final ShipmentService shipmentService;
-    private final AuthService authService;
 
     @Scheduled(fixedDelay = 1000 * 60 * 15)
     private void updateShipment() {
