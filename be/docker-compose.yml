@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+
+  prometheus:
+    image: prom/prometheus:v2.38.0
+    network_mode: host
+    container_name: prometheus-container
+    volumes:
+      - ./prometheus/:/etc/prometheus/
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yaml'
+    ports:
+      - "9090:9090"
+    restart: always
+
+  grafana:
+    image: grafana/grafana-oss:9.1.4
+    container_name: grafana-container
+    network_mode: host
+    depends_on:
+      - prometheus
+    user: 'root'
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./grafana/:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_SERVER_DOMAIN=localhost

@@ -1,0 +1,11 @@
+scrape_configs:
+  - job_name: 'Spring Boot Application input'
+    authorization:
+      type: "Bearer"
+      credentials: "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJlZGkiLCJpYXQiOjE2NzM4OTQyNDcsImV4cCI6MTg1Mzg5NDI0N30.0s-Y4btFReZ1z8D4RKNGoNRkrpQ-dBNVOcXhhWNdaqfp-xBUQefkeBEb1gxHbd2w8rxcd7_zRyn7mvglF4zOAQ"
+    metrics_path: '/actuator/prometheus'
+    scrape_interval: 3s
+    static_configs:
+      - targets: ['localhost:8080']
+        labels:
+          application: 'My Spring Boot Application'
